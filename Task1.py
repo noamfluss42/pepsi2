@@ -1,5 +1,7 @@
+#imports
 import numpy as np
-
+import matplotlib.pyplot as plt
+import pandas as pd
 v_start = 200
 
 
@@ -20,3 +22,8 @@ def kassam_in_vaccum(dt, x0, y0, v0, theta0):
         v_y = np.append(v_y, v_y[i] - 10 * dt)
         i += 1
     return x, y
+
+
+x, y = kassam_in_vaccum(0.001, 0, 0, v_start, 50)
+plt.plot(x, y)
+plt.show()
