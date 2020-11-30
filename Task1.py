@@ -11,7 +11,8 @@ RHO = 1.2
 add_block_size = 50000
 
 
-def shooting_kassam(dt, x0, y0, v0, theta0, friction_coefficient=None):
+def shooting_kassam(dt, x0, y0, v0, theta0, friction_coefficient=0):
+
     x = np.zeros(add_block_size)
     v_x = np.zeros(add_block_size)
     y = np.zeros(add_block_size)
@@ -29,15 +30,12 @@ def shooting_kassam(dt, x0, y0, v0, theta0, friction_coefficient=None):
             v_y = np.append(v_y, np.zeros(add_block_size))
         x[i + 1] = dt * v_x[i] + x[i]
         v_x[i + 1] = v_x[i]
-        if friction_coefficient is not None:
-            v_x[i + 1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_x[i] * dt
+        v_x[i + 1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_x[i] * dt
         y[i + 1] = dt * v_y[i] + y[i]
         v_y[i + 1] = v_y[i] - 10 * dt
 
-        if friction_coefficient is not None:
-            v_y[i + 1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_y[i] * dt
+        v_y[i + 1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_y[i] * dt
         i += 1
-    print(f"i is {i}")
     return x[:i + 1], y[:i + 1]
 
 
@@ -126,7 +124,6 @@ def secant_method(destination, function, guess1, guess2, precision=0.01):
             consecutive_successes = 0
 
         f_prev = f_curr
-    print(f"---Found! Result is {guesses[-1]}")
     return guesses[-1]
 
 
@@ -149,9 +146,7 @@ def draw_theta_to_x_dest():
     linear_guess = list(np.linspace(49, 71, count + 1))[::-1]
     theta = []
     for i, x in enumerate(x_dest):
-        print(f"guesses are {linear_guess[i], linear_guess[i + 1]}")
         theta.append(find_theta(x, linear_guess[i], linear_guess[i + 1]))
-        print(f"---Already found {i + 1} thetas")
     plt.plot(x_dest, theta)
     plt.xlabel("x dest")
     plt.ylabel("theta")
@@ -162,10 +157,6 @@ def find_minimal_distance(x0_first, theta0_first, x0_second, theta0_second):
     x_first, y_first = kassam_in_air(0.001, x0_first, 0, v_start, theta0_first, friction_coefficient=C * A * RHO / M)
     x_second, y_second = kassam_in_air(0.001, x0_second, 0, v_start, theta0_second,
                                        friction_coefficient=0.7 * C * A * RHO / M)
-    #plt.plot(x_first, y_first, label="first")
-    #plt.plot(x_second, y_second, label="second")
-    #plt.legend()
-    #plt.show()
     x_first = np.append(x_first, abs(len(x_first) - len(x_second)) * [x_first[-1]])
     y_first = np.append(y_first, abs(len(y_first) - len(y_second)) * [y_first[-1]])
     x_second = np.append(x_second, abs(len(x_first) - len(x_second)) * [x_second[-1]])
@@ -195,6 +186,7 @@ def min_distance_kassam(theta):
     R = x_hit(50)
     r_min = find_minimal_distance(0, 50, 0.75 * R, theta)
     return r_min
+
 
 def draw_r_min_for_theta():
     theta = np.linspace(95, 175, 50)
