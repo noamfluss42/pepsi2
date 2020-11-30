@@ -1,9 +1,7 @@
-# imports
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 
-v_start = 200
+v_start = 300
 C = 0.75
 M = 32
 A = 0.018
@@ -12,7 +10,6 @@ add_block_size = 50000
 
 
 def shooting_kassam(dt, x0, y0, v0, theta0, friction_coefficient=0):
-
     x = np.zeros(add_block_size)
     v_x = np.zeros(add_block_size)
     y = np.zeros(add_block_size)
@@ -136,7 +133,7 @@ def draw_x_hit():
     x_hits = [x_hit(t) for t in theta]
     plt.plot(theta, x_hits)
     plt.xlabel("theta")
-    plt.ylabel("x")
+    plt.ylabel("x hit location")
     plt.show()
 
 
@@ -148,7 +145,7 @@ def draw_theta_to_x_dest():
     for i, x in enumerate(x_dest):
         theta.append(find_theta(x, linear_guess[i], linear_guess[i + 1]))
     plt.plot(x_dest, theta)
-    plt.xlabel("x dest")
+    plt.xlabel("x destination (fall location)")
     plt.ylabel("theta")
     plt.show()
 
@@ -177,23 +174,27 @@ def show_until_minimal_distance(x0_first, theta0_first, x0_second, theta0_second
     dx_power_2 = np.power(x_first - x_second, 2)
     dy_power_2 = np.power(y_first - y_second, 2)
     arg_min = np.argmin(dx_power_2 + dy_power_2)
-    plt.plot(x_first[:arg_min + 1], y_first[:arg_min + 1])
-    plt.plot(x_second[:arg_min + 1], y_second[:arg_min + 1])
+    plt.plot(x_first[:arg_min + 1], y_first[:arg_min + 1], label="first")
+    plt.plot(x_second[:arg_min + 1], y_second[:arg_min + 1], label="second")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.legend()
     plt.show()
 
 
 def min_distance_kassam(theta):
-    R = x_hit(50)
-    r_min = find_minimal_distance(0, 50, 0.75 * R, theta)
+    kassam_theta = 50
+    R = x_hit(kassam_theta)
+    r_min = find_minimal_distance(0, kassam_theta, 0.75 * R, theta)
     return r_min
 
 
 def draw_r_min_for_theta():
     theta = np.linspace(95, 175, 50)
-    r_min = [min_distance_kassam(t) for t in theta]
+    r_min = [np.sqrt(min_distance_kassam(t)) for t in theta]
     plt.plot(theta, r_min)
     plt.xlabel("theta")
-    plt.ylabel("r_min")
+    plt.ylabel("minimal distance achieved")
     plt.show()
 
 
@@ -202,9 +203,10 @@ def find_theta_to_prdocue_r_min_min():
 
 
 def visualize_r_min_min():
-    R = x_hit(50)
+    kassam_theta = 50
+    R = x_hit(kassam_theta)
     target_theta = find_theta_to_prdocue_r_min_min()
-    show_until_minimal_distance(0, 50, 0.75 * R, target_theta)
+    show_until_minimal_distance(0, kassam_theta, 0.75 * R, target_theta)
 
 
 visualize_r_min_min()
