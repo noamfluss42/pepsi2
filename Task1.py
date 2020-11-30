@@ -1,7 +1,8 @@
-#imports
+# imports
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+
 v_start = 200
 
 
@@ -24,6 +25,11 @@ def kassam_in_vaccum(dt, x0, y0, v0, theta0):
     return x, y
 
 
-x, y = kassam_in_vaccum(0.001, 0, 0, v_start, 50)
-plt.plot(x, y)
-plt.show()
+def q2_section6_run():
+    x, y = kassam_in_vaccum(0.001, 0, 0, v_start, 50)
+    if x[0] > 0:
+        x_from_start = np.concatenate([[0], x])
+    else:
+        x_from_start = x
+    plt.plot(x_from_start, y)
+    plt.show()
