@@ -138,13 +138,16 @@ def draw_x_hit():
     plt.show()
 
 
-def find_minimal_distance(x0_first, theta0_first, x0_second, theta0_second):
+def find_minimal_distance ( x0_first , theta0_first , x0_second , theta0_second ):
     x_first, y_first = kassam_in_air(0.001, x0_first, 0, v_start, theta0_first, friction_coefficient=C * A * RHO / M)
-    x_second, y_second = kassam_in_air(0.001, x0_second, 0, v_start, theta0_second,
-                                       friction_coefficient=C * A * RHO / M)
-    dx_power_2 = np.power(x_first - x_second, 2)
-    dy_power_2 = np.power(y_first - y_second, 2)
-    return (dx_power_2 + dy_power_2).amin()
+    x_second, y_second = kassam_in_air(0.001, x0_second, 0, v_start, theta0_second, friction_coefficient=0.7*C * A * RHO / M)
+    x_first = np.append(x_first, abs(len(x_first) - len(x_second))*[x_first[-1]])
+    y_first = np.append(y_first, abs(len(y_first) - len(y_second))*[y_first[-1]])
+    x_second = np.append(x_second, abs(len(x_first) - len(x_second))*[x_second[-1]])
+    y_second = np.append(y_second, abs(len(y_first) - len(y_second))*[y_second[-1]])
+    dx_power_2 = np.power(x_first - x_second,2)
+    dy_power_2 = np.power(y_first - y_second,2)
+    return np.amin(dx_power_2 + dy_power_2)
 
 
 # q2_section6()
