@@ -38,7 +38,7 @@ def shooting_kassam(dt, x0, y0, v0, theta0, friction_coefficient=None):
             v_y[i + 1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_y[i] * dt
         i += 1
     print(f"i is {i}")
-    return x[:i+1], y[:i+1]
+    return x[:i + 1], y[:i + 1]
 
 
 def kassam_in_vaccum(dt, x0, y0, v0, theta0):
@@ -89,7 +89,16 @@ def q3_section4():
 
     plt.show()
 
+
 def q3_section6():
+    log_dt_values = np.linspace(start=-4, stop=-1, num=500)
+    dt_values = np.power(10, log_dt_values)
+    result = [kassam_in_air(dt, 0, 0, v_start, 50, friction_coefficient=C * A * RHO / M)[0][-1] for dt in dt_values]
+    plt.loglog(dt_values, result)
+    plt.xlabel('$dt$', size=15)
+    plt.ylabel(r'x landing', size=15)
+    plt.grid()
+    plt.show()
 
 
 def x_hit(theta):
@@ -103,6 +112,7 @@ def find_theta(x_dest, initial_theta1, initial_theta2):
 
     def f(theta):
         return x_dest - x_hit(theta)
+
     f_prev = f(initial_theta1)
     while consecutive_successes < 3:
         curr = guesses[-1]
@@ -110,7 +120,7 @@ def find_theta(x_dest, initial_theta1, initial_theta2):
         f_curr = f(curr)
         nxt = curr - f_curr * (curr - prev) / (f_curr - f_prev)
         guesses.append(nxt)
-        if abs(nxt-curr) < 0.01:
+        if abs(nxt - curr) < 0.01:
             consecutive_successes += 1
         else:
             consecutive_successes = 0
@@ -128,9 +138,16 @@ def draw_x_hit():
     plt.show()
 
 
+def find_minimal_distance(x0_first, theta0_first, x0_second, theta0_second):
+    x_first, y_first = kassam_in_air(0.001, x0_first, 0, v_start, theta0_first, friction_coefficient=C * A * RHO / M)
+    x_second, y_second = kassam_in_air(0.001, x0_second, 0, v_start, theta0_second,
+                                       friction_coefficient=C * A * RHO / M)
+    dx_power_2 = np.power(x_first - x_second, 2)
+    dy_power_2 = np.power(y_first - y_second, 2)
+    return (dx_power_2 + dy_power_2).amin()
 
 
-#q2_section6()
-#q3_section4()
-#draw_x_hit()
+# q2_section6()
+# q3_section4()
+# draw_x_hit()
 print(f"theta is {find_theta(1750, 10, 30)}")
