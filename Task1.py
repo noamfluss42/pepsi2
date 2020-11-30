@@ -1,34 +1,41 @@
 # imports
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 v_start = 200
 C = 0.75
 M = 32
 A = 0.018
 RHO = 1.2
+add_block_size = 50000
 
 
 def shooting_kassam(dt, x0, y0, v0, theta0, friction_coefficient=None):
-    x = np.zeros(1)
-    v_x = np.zeros(1)
-    y = np.zeros(1)
-    v_y = np.zeros(1)
+    x = np.zeros(add_block_size)
+    v_x = np.zeros(add_block_size)
+    y = np.zeros(add_block_size)
+    v_y = np.zeros(add_block_size)
     x[0] = x0
     v_x[0] = v0 * np.cos(theta0 * np.pi / 180)
     y[0] = y0
     v_y[0] = v0 * np.sin(theta0 * np.pi / 180)
     i = 0
-    while i < 100 or y[-1] > 0.01:
-        x = np.append(x, [dt * v_x[i] + x[i]])
-        v_x = np.append(v_x, [v_x[i]])
+    while i < 100 or y[i] > 0.01:
+        if i + 1 >= x.shape[0]:
+            x = np.append(x, np.zeros(add_block_size))
+            v_x = np.append(v_x, np.zeros(add_block_size))
+            y = np.append(y, np.zeros(add_block_size))
+            v_y = np.append(v_y, np.zeros(add_block_size))
+        x[i + 1] = dt * v_x[i] + x[i]
+        v_x[i + 1] = v_x[i]
         if friction_coefficient is not None:
-            v_x[-1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_x[i] * dt
-        y = np.append(y, [dt * v_y[i] + y[i]])
-        v_y = np.append(v_y, v_y[i] - 10 * dt)
+            v_x[i + 1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_x[i] * dt
+        y[i + 1] = dt * v_y[i] + y[i]
+        v_y[i + 1] = v_y[i] - 10 * dt
 
         if friction_coefficient is not None:
-            v_y[-1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_y[i] * dt
+            v_y[i + 1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_y[i] * dt
         i += 1
     print(f"i is {i}")
     return x, y
