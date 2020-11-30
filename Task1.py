@@ -162,6 +162,10 @@ def find_minimal_distance(x0_first, theta0_first, x0_second, theta0_second):
     x_first, y_first = kassam_in_air(0.001, x0_first, 0, v_start, theta0_first, friction_coefficient=C * A * RHO / M)
     x_second, y_second = kassam_in_air(0.001, x0_second, 0, v_start, theta0_second,
                                        friction_coefficient=0.7 * C * A * RHO / M)
+    #plt.plot(x_first, y_first, label="first")
+    #plt.plot(x_second, y_second, label="second")
+    #plt.legend()
+    #plt.show()
     x_first = np.append(x_first, abs(len(x_first) - len(x_second)) * [x_first[-1]])
     y_first = np.append(y_first, abs(len(y_first) - len(y_second)) * [y_first[-1]])
     x_second = np.append(x_second, abs(len(x_first) - len(x_second)) * [x_second[-1]])
@@ -187,19 +191,28 @@ def show_until_minimal_distance(x0_first, theta0_first, x0_second, theta0_second
     plt.show()
 
 
-draw_theta_to_x_dest()
+def min_distance_kassam(theta):
+    R = x_hit(50)
+    r_min = find_minimal_distance(0, 50, 0.75 * R, theta)
+    return r_min
 
-# q2_section6()
-# q3_section4()
-# draw_x_hit()
-"""
-print(f"xdest is {x_hit(80)}")
-print(f"xdest is {x_hit(40)}")
-print(f"xdest is {x_hit(37)}")
-print(f"xdest is {x_hit(10)}")
-print(f"xdest is {x_hit(5)}")
-print(f"theta is {find_theta(1750, 10, 30)}")
-print(f"theta is {find_theta(1750, 10, 30)}")
-print(f"theta is {find_theta(1750, 10, 30)}")
-print(f"theta is {find_theta(1750, 10, 30)}")
-"""
+def draw_r_min_for_theta():
+    theta = np.linspace(95, 175, 50)
+    r_min = [min_distance_kassam(t) for t in theta]
+    plt.plot(theta, r_min)
+    plt.xlabel("theta")
+    plt.ylabel("r_min")
+    plt.show()
+
+
+def find_theta_to_prdocue_r_min_min():
+    return secant_method(0, min_distance_kassam, 140, 145)
+
+
+def visualize_r_min_min():
+    R = x_hit(50)
+    target_theta = find_theta_to_prdocue_r_min_min()
+    show_until_minimal_distance(0, 50, 0.75 * R, target_theta)
+
+
+visualize_r_min_min()
