@@ -88,26 +88,34 @@ def x_hit(theta):
     return x[-1]
 
 
-def find_theta(x_dest, initial_theta1, initial_theta2):
-    guesses = [initial_theta1, initial_theta2]
+def secant_method(destination, function, guess1, guess2, precision=0.01):
+    guesses = [guess1, guess2]
     consecutive_successes = 0
 
-    def f(theta):
-        return x_dest - x_hit(theta)
-    f_prev = f(initial_theta1)
+    def f(guess):
+        return destination - function(guess)
+
+    f_prev = f(guess1)
     while consecutive_successes < 3:
         curr = guesses[-1]
         prev = guesses[-2]
         f_curr = f(curr)
         nxt = curr - f_curr * (curr - prev) / (f_curr - f_prev)
         guesses.append(nxt)
-        if abs(nxt-curr) < 0.01:
+        if abs(nxt - curr) < precision:
             consecutive_successes += 1
         else:
             consecutive_successes = 0
 
         f_prev = f_curr
+    print(f"---Found! Result is {guesses[-1]}")
     return guesses[-1]
+
+
+def find_theta(x_dest, initial_theta1, initial_theta2):
+    return secant_method(x_dest, x_hit, initial_theta1, initial_theta2)
+
+
 
 
 def draw_x_hit():
@@ -119,9 +127,35 @@ def draw_x_hit():
     plt.show()
 
 
+def draw_theta_to_x_dest():
+    count = 25
+    x_dest = np.linspace(x_hit(70), x_hit(50), count)
+    linear_guess = list(np.linspace(49, 71, count + 1))[::-1]
+    theta = []
+    for i, x in enumerate(x_dest):
+        print(f"guesses are {linear_guess[i], linear_guess[i+1]}")
+        theta.append(find_theta(x, linear_guess[i], linear_guess[i+1]))
+        print(f"---Already found {i+1} thetas")
+    plt.plot(x_dest, theta)
+    plt.xlabel("x dest")
+    plt.ylabel("theta")
+    plt.show()
+
+
+draw_theta_to_x_dest()
 
 
 #q2_section6()
 #q3_section4()
 #draw_x_hit()
+"""
+print(f"xdest is {x_hit(80)}")
+print(f"xdest is {x_hit(40)}")
+print(f"xdest is {x_hit(37)}")
+print(f"xdest is {x_hit(10)}")
+print(f"xdest is {x_hit(5)}")
 print(f"theta is {find_theta(1750, 10, 30)}")
+print(f"theta is {find_theta(1750, 10, 30)}")
+print(f"theta is {find_theta(1750, 10, 30)}")
+print(f"theta is {find_theta(1750, 10, 30)}")
+"""
