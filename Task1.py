@@ -38,7 +38,7 @@ def shooting_kassam(dt, x0, y0, v0, theta0, friction_coefficient=None):
             v_y[i + 1] -= friction_coefficient * ((v_x[i] ** 2 + v_y[i] ** 2) ** 0.5) * v_y[i] * dt
         i += 1
     print(f"i is {i}")
-    return x, y
+    return x[:i+1], y[:i+1]
 
 
 def kassam_in_vaccum(dt, x0, y0, v0, theta0):
@@ -88,6 +88,8 @@ def q3_section4():
     plt.plot(x_from_start, y, "")
 
     plt.show()
+
+def q3_section6():
 
 
 def x_hit(theta):
