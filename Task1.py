@@ -67,7 +67,7 @@ def q2_section6():
     plt.show()
 
 
-def q3_section4():
+def q3_section5():
     x, y = kassam_in_air(0.001, 0, 0, v_start, 50, friction_coefficient=0)
     if x[0] > 0:
         x_from_start = np.concatenate([[0], x])
@@ -81,7 +81,6 @@ def q3_section4():
     else:
         x_from_start = x
     plt.plot(x_from_start, y)
-
     x, y = kassam_in_air(0.001, 0, 0, v_start, 50, friction_coefficient=0.005)
     if x[0] > 0:
         x_from_start = np.concatenate([[0], x])
@@ -97,6 +96,25 @@ def q3_section4():
     plt.plot(x_from_start, y)
     plt.legend(['friction_coefficient=0', 'friction_coefficient=0.0005', 'friction_coefficient=0.005',
                 'friction_coefficient=0.05'])
+    plt.show()
+
+
+def q3_section5():
+    x, y = kassam_in_air(0.001, 0, 0, v_start, 50, friction_coefficient=0)
+    if x[0] > 0:
+        x_from_start = np.concatenate([[0], x])
+    else:
+        x_from_start = x
+    plt.plot(x_from_start, y)
+
+    x, y = kassam_in_air(0.001, 0, 0, v_start, 50, friction_coefficient=C * A * RHO / M)
+    if x[0] > 0:
+        x_from_start = np.concatenate([[0], x])
+    else:
+        x_from_start = x
+    plt.plot(x_from_start, y)
+
+    plt.plot(x_from_start, y)
     plt.show()
 
 
